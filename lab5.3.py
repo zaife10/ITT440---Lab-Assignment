@@ -2,6 +2,25 @@ import socket
 import sys
 import json
 
+<<<<<<< HEAD
+s = socket.socket()
+
+port = 8080
+
+s.connect(('192.168.56.103', port))
+
+data = s.recv(1024)
+data = data.decode("utf-8")
+
+s.send(b'Thank you from client!');
+
+dataJ = json.loads(data)
+
+print (type(dataJ))
+print(dataJ)
+
+s.close()
+=======
 mydata = {"id": 505012, "name": "Azizi", "age": "29"}
 sendData = json.dumps(mydata)
 
@@ -24,3 +43,4 @@ while True:
         buffer = c.recv(1024)
         print(buffer)
 c.close()
+>>>>>>> c7283697c449f4c38eb0389eee301c904d956887
