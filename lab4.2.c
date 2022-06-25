@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include <string.h>
+#include <string.h> //new
 #include<sys/socket.h>
 #include<arpa/inet.h>	//inet_addr
 
@@ -39,3 +39,4 @@ int main(int argc , char *argv[])
 	puts("Data Send\n");
 	return 0;
 }
+
