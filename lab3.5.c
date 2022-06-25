@@ -1,56 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/types.h>
+#include <unistd.h>
 #include <sys/wait.h>
- 
-#define PIN_LENGTH 4
-#define PIN_WAIT_INTERVAL 2
- 
-void getPIN(char pin[PIN_LENGTH + 1]) {
-  srand(getpid() + getppid());
- 
-  pin[0] = 49 + rand() % 7;
- 
-  for(int i = 1; i < PIN_LENGTH; i++) {
-    pin[i] = 48 + rand() % 7;
-  }
- 
-  pin[PIN_LENGTH] = '\0';
-}
- 
+
+#define waiting 50
  
 int main(void) {
-  while(1) {
-    int pipefds[2];
-    char pin[PIN_LENGTH + 1];
-    char buffer[PIN_LENGTH + 1];
+  int fd[2];
+  pipe(fd);
+  pid_t pid = fork();
  
-    pipe(pipefds);
- 
-    pid_t pid = fork();
- 
-    if(pid == 0) {
-      getPIN(pin); // generate PIN
-      close(pipefds[0]); // close read fd
-      write(pipefds[1], pin, PIN_LENGTH + 1); // write PIN to pipe
- 
-      printf("Generating PIN in child and sending to parent...\n");
- 
-      sleep(PIN_WAIT_INTERVAL); // delaying PIN generation intentionally.
- 
-      exit(EXIT_SUCCESS);
+  if(pid > 0) {
+    close(0);
+    close(fd[1]);
+    dup(fd[0]);
+    
+    int primenum, flag = 0;
+    read(fd[0], &primenum, sizeof(primenum));
+    printf("Checking prime number...\n");
+    wait(NULL);
+
+
+    for(int i=2 ; i < primenum/2 ; i++) {
+      if(primenum%i == 0) {
+         printf("%d is not a prime number\n\n", primenum);
+         flag = 1;
+         break;
+        }
     }
- 
-    if(pid > 0) {
-      wait(NULL); // waiting for child to finish
- 
-      close(pipefds[1]); // close write fd
-      read(pipefds[0], buffer, PIN_LENGTH + 1); // read PIN from pipe
-      close(pipefds[0]); // close read fd
-      printf("Parent received PIN '%s' from child.\n\n", buffer);
+   if(flag == 0) {
+      printf("%d is a prime number\n\n", primenum);
     }
-  }
- 
+    printf("Press ctrl c to terminate program:\n");
+    sleep(waiting);
+   }
+  else if(pid == 0) {
+    int num;
+  	printf("Enter any integer num : ");
+	scanf("%d", &num);
+    write(fd[1], &num, sizeof(num));
+    close(1);
+    close(fd[0]);
+    dup(fd[1]);
+    exit(EXIT_SUCCESS);
+   }
   return EXIT_SUCCESS;
 }
+
