@@ -1,5 +1,9 @@
 #include<stdio.h>
+<<<<<<< HEAD
 #include <string.h> //new
+=======
+#include<string.h>
+>>>>>>> 0c0a14585bc24d2e5ec48b71bb4b7461ce963bb6
 #include<sys/socket.h>
 #include<arpa/inet.h>	//inet_addr
 
